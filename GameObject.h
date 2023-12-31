@@ -5,12 +5,20 @@
 #include "GameObject.h"
 #include "Shape.h"
 
+#include <vector>
+
 class GameObject
 {
+	GameObject* Parent = nullptr;
+
 	Vector2 Forces = {};
+	std::vector<GameObject*> Children;
+
 
 public:
-	Color ObjectColor = RED;
+	Texture2D Texture = {};
+
+	Color Tint = WHITE;
 
 	// Position
 	Vector2 Position = {};
@@ -31,7 +39,19 @@ public:
 	// Drag
 	float Drag = 0.5f;
 
-	void TickPhys(float fixedDelta);
+	virtual void EarlyStart();
+	virtual void Start();
+	virtual void LateStart();
+
+	virtual void EarlyUpdate(float deltaTime);
+	virtual void Update(float deltaTime);
+	virtual void LateUpdate(float deltaTime);
+
+	virtual void EarlyDraw();
+	virtual void Draw();
+	virtual void LateDraw();
+
+	virtual void FixedUpdate(float fixedDelta);
 
 	void AddAccel(Vector2 accel);
 
@@ -44,6 +64,8 @@ public:
 	virtual void Draw() const;
 
 	Vector2 GetMomentum() const;
+
+	void SetParent(GameObject* Parent);
 };
 
 void ResolvePhysObjects(GameObject& left, GameObject& right, float elasticity, Vector2 normal, float pen);

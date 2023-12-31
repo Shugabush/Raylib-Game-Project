@@ -1,4 +1,5 @@
-#include "BaseGame.h"
+#include "BaseScene.h"
+#include "TextureLibrary.h"
 
 #include <raylib-cpp.hpp>
 
@@ -8,26 +9,30 @@ int main() {
     int screenWidth = 800;
     int screenHeight = 450;
 
-    raylib::Color textColor(LIGHTGRAY);
-    raylib::Window w(screenWidth, screenHeight, "Raylib C++ Starter Kit Example");
+    BaseScene* Game = new BaseScene();
 
-    BaseGame* Game = new BaseGame();
+    Game->Init();
 
-    GameObject* SpawnedObject = Game->SpawnObject<GameObject>({ 0, 0 }, 0);
-    
-    SetTargetFPS(60);
+    InitWindow(screenWidth, screenHeight, "Raylib Game");
+
+    GameObject* SpawnedObject = Game->SpawnObject<GameObject>({ 250, 250 }, 0);
+    SpawnedObject->Texture = GetTexture("Textures/CharacterPack/PNG/Skin/Tint1/tint1_head.png");
+
 
     // Main game loop
-    while (!w.ShouldClose()) // Detect window close button or ESC key
+    while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         // Update
-
         // TODO: Update your variables here
+        Game->Update(GetFrameTime());
 
         // Draw
         BeginDrawing();
+
         ClearBackground(RAYWHITE);
-        textColor.DrawText("Congrats! You created your first window!", 190, 200, 20);
+
+        Game->Draw();
+
         EndDrawing();
     }
 

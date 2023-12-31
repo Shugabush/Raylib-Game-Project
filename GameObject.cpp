@@ -2,8 +2,65 @@
 #include "raylib.h"
 #include "Utils.h"
 #include <cassert>
+#include <iostream>
 
-void GameObject::TickPhys(float fixedDelta)
+void GameObject::EarlyStart()
+{
+
+}
+
+void GameObject::Start()
+{
+
+}
+
+void GameObject::LateStart()
+{
+
+}
+
+void GameObject::EarlyUpdate(float deltaTime)
+{
+
+}
+
+void GameObject::Update(float deltaTime)
+{
+
+}
+
+void GameObject::LateUpdate(float deltaTime)
+{
+
+}
+
+void GameObject::EarlyDraw()
+{
+
+}
+
+void GameObject::Draw()
+{
+	Vector2 TextureSize = { (float)Texture.width, (float)Texture.height };
+
+	TextureSize = Vector2Normalize(TextureSize);
+
+	TextureSize *= 250;
+
+	DrawTexturePro(Texture,
+		{ 0, 0, (float)Texture.width, (float)Texture.height },
+		{ Position.x, Position.y, TextureSize.x, TextureSize.y },
+		TextureSize / 2, Rotation, Tint);
+
+	DrawLine((int)Position.x, (int)Position.y, (int)(Position.x), (int)(Position.y + 50), RED);
+}
+
+void GameObject::LateDraw()
+{
+
+}
+
+void GameObject::FixedUpdate(float fixedDelta)
 {
 	if (UseGravity)
 	{
@@ -52,16 +109,16 @@ void GameObject::Draw() const
 	switch (Collider.Type)
 	{
 	case ShapeType::NONE:
-		DrawPixel((int)Position.x, (int)Position.y, ObjectColor);
+		DrawPixel((int)Position.x, (int)Position.y, Tint);
 		break;
 	case ShapeType::CIRCLE:
 		// Draw circle
-		DrawCircleLines((int)Position.x, (int)Position.y, Collider.CircleData.Radius, ObjectColor);
+		DrawCircleLines((int)Position.x, (int)Position.y, Collider.CircleData.Radius, Tint);
 		break;
 	case ShapeType::AABB:
 		// Draw AABB
 		DrawRectangleLines((int)(Position.x - Collider.AABBData.HalfExtents.x), (int)(Position.y - Collider.AABBData.HalfExtents.y),
-			(int)Collider.AABBData.HalfExtents.x * 2, (int)Collider.AABBData.HalfExtents.y * 2, ObjectColor);
+			(int)Collider.AABBData.HalfExtents.x * 2, (int)Collider.AABBData.HalfExtents.y * 2, Tint);
 		break;
 	}
 }
@@ -69,6 +126,19 @@ void GameObject::Draw() const
 Vector2 GameObject::GetMomentum() const
 {
 	return Velocity * Mass;
+}
+
+void GameObject::SetParent(GameObject* NewParent)
+{
+	if (Parent != nullptr)
+	{
+		RemoveFromCollection<GameObject*>(Parent->Children, this);
+	}
+	Parent = NewParent;
+	if (Parent != nullptr)
+	{
+		Parent->Children.push_back(this);
+	}
 }
 
 void ResolveGameObjects(GameObject& left, GameObject& right, float elasticity, Vector2 normal, float pen)
