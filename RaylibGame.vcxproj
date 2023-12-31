@@ -130,6 +130,7 @@
     <ClCompile Include="BaseGame.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -137,6 +138,8 @@
   <ItemGroup>
     <ClInclude Include="BaseGame.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Shape.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

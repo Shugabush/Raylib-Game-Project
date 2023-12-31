@@ -13,7 +13,7 @@ int main() {
 
     BaseGame* Game = new BaseGame();
 
-    GameObject* SpawnedObject = Game->SpawnObject<GameObject>();
+    GameObject* SpawnedObject = Game->SpawnObject<GameObject>({ 0, 0 }, 0);
     
     SetTargetFPS(60);
 

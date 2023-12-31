@@ -1,26 +1,77 @@
 #pragma once
-#include <vector>
 
 #include "GameObject.h"
+#include "Shape.h"
+
+#include <vector>
+#include <unordered_map>
+
+// the function signature for any collision detection test
+using CollisionFunc = bool(*)(const Vector2&, const Shape&, const Vector2&, const Shape&);
+using DepenetrationFunc = Vector2(*)(const Vector2&, const Shape&, const Vector2&, const Shape&, float&);
+
+// a map that take a collision pair and returns the correct function to call
+using CollisionMap = std::unordered_map<ShapeType, CollisionFunc>;
+using DepenetrationMap = std::unordered_map<ShapeType, DepenetrationFunc>;
 
 class BaseGame
 {
+protected:
+	// Time since the last fixed update tick
+	float AccumulatedFixedTime = 0;
+
+	// Internal lifecycle events
+	virtual void OnInit() { }
+
+	virtual void OnTick() { }
+
+	virtual void OnDraw() const { }
+
+	virtual void OnExit() { }
+
 	std::vector<GameObject*> GameObjects;
+
 	std::vector<GameObject*> ObjectsToAdd;
 	std::vector<GameObject*> ObjectsToDestroy;
 
+	CollisionMap collisionCheckers;
+	DepenetrationMap collisionDepenetrators;
+
 public:
-	BaseGame() = default;
+	// defaults to 30fps
+	float TargetFixedStep = 1.0f / 30.0f;
+
+	// Default Constructor - set up good defaults
+	BaseGame();
+
 	~BaseGame();
 
-	void Start();
-	void Update(float DeltaTime);
-	void Draw();
+	// Initialize the game
+	void Init();
+
+	// Poll for input and game logic
+	void Tick();
+
+	// Update any fixed update objects
+	void TickFixed();
+
+	// Drawing objects to the screen
+	void Draw() const;
+
+	// Terminate - clean-up resources
+	void Exit();
+
+	// Returns true if we need to exit
+	bool ShouldClose() const;
+
+	// Returns true if we are due for a fixed update
+	bool ShouldTickFixed() const;
 
 	template<typename T>
-	T* SpawnObject(Vector2 Position = { 0, 0 }, float Rotation = 0);
-};
+	T* SpawnObject(Vector2 Position, float Rotation);
 
+	void Destroy(GameObject* obj);
+};
 
 template<typename T>
 T* BaseGame::SpawnObject(Vector2 Position, float Rotation)
