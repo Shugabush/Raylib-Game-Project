@@ -1,11 +1,9 @@
 #pragma once
 
-#include "raylib.h"
-
-#include "GameObject.h"
 #include "Shape.h"
 
 #include <vector>
+#include <string>
 
 class GameObject
 {
@@ -14,8 +12,18 @@ class GameObject
 	Vector2 Forces = {};
 	std::vector<GameObject*> Children;
 
-
 public:
+	GameObject();
+
+	bool DrawForwardDirection = true;
+	bool DrawCollision = true;
+
+	Color ForwardDirectionColor = RED;
+	Color CollisionColor = GREEN;
+
+	std::string Name = "New GameObject";
+	std::string Tag = "GameObject";
+
 	Texture2D Texture = {};
 
 	Color Tint = WHITE;
@@ -31,7 +39,7 @@ public:
 
 	Shape Collider;
 
-	bool UseGravity = true;
+	bool UseGravity = false;
 
 	// Mass
 	float Mass = 1;
@@ -60,8 +68,6 @@ public:
 	void AddForce(Vector2 force);
 
 	void AddImpulse(Vector2 impulse);
-
-	virtual void Draw() const;
 
 	Vector2 GetMomentum() const;
 

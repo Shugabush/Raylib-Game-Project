@@ -80,7 +80,7 @@ T* BaseScene::SpawnObject(Vector2 Position, float Rotation)
 {
 	static_assert(std::is_base_of<GameObject, T>::value, "T must inherit from GameObject!");
 
-	GameObject* Object = new GameObject();
+	T* Object = new T();
 	Object->Position = Position;
 	Object->Rotation = Rotation;
 

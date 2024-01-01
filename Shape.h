@@ -42,6 +42,8 @@ struct Shape
         Circle CircleData;
         AABB AABBData;
     };
+
+    void Draw(class GameObject* Owner);
 };
 
 bool CheckCircleCircle(Vector2 posA, Circle circleA, Vector2 posB, Circle circleB);

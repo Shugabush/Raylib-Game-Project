@@ -1,9 +1,9 @@
 #include "BaseScene.h"
 
-#include <algorithm>
-
 #include "raylib.h"
 #include "Utils.h"
+
+#include <algorithm>
 
 BaseScene::BaseScene() { }
 

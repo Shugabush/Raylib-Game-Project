@@ -130,7 +130,9 @@
     <ClCompile Include="BaseGame.cpp" />
     <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="TextureLibrary.cpp" />
     <ClCompile Include="TileMap.cpp" />
@@ -142,6 +144,8 @@
     <ClInclude Include="BaseGame.h" />
     <ClInclude Include="BaseScene.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="TextureLibrary.h" />
     <ClInclude Include="TileMap.h" />

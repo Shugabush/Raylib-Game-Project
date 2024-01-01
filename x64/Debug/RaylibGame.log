@@ -1,2 +1,9 @@
-﻿  GameObject.cpp
+﻿  BaseGame.cpp
+  BaseScene.cpp
+  GameObject.cpp
+  Player.cpp
+  Shape.cpp
+  TileMap.cpp
+  main.cpp
+  Generating Code...
   RaylibGame.vcxproj -> C:\Users\Alex\Downloads\RaylibGame\x64\Debug\RaylibGame.exe

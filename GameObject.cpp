@@ -4,6 +4,13 @@
 #include <cassert>
 #include <iostream>
 
+GameObject::GameObject()
+{
+	Collider = Shape();
+	Collider.Type = ShapeType::AABB;
+	Collider.AABBData.HalfExtents = { 25, 25 };
+}
+
 void GameObject::EarlyStart()
 {
 
@@ -51,13 +58,18 @@ void GameObject::Draw()
 		{ 0, 0, (float)Texture.width, (float)Texture.height },
 		{ Position.x, Position.y, TextureSize.x, TextureSize.y },
 		TextureSize / 2, Rotation, Tint);
-
-	DrawLine((int)Position.x, (int)Position.y, (int)(Position.x), (int)(Position.y + 50), RED);
 }
 
 void GameObject::LateDraw()
 {
-
+	if (DrawForwardDirection)
+	{
+		DrawLine((int)Position.x, (int)Position.y, (int)(Position.x), (int)(Position.y + 50), ForwardDirectionColor);
+	}
+	if (DrawCollision)
+	{
+		Collider.Draw(this);
+	}
 }
 
 void GameObject::FixedUpdate(float fixedDelta)
@@ -98,29 +110,6 @@ void GameObject::AddForce(Vector2 force)
 void GameObject::AddImpulse(Vector2 impulse)
 {
 	Velocity += impulse / Mass;
-}
-
-void GameObject::Draw() const
-{
-	// Draw transform
-	DrawLine((int)Position.x, (int)Position.y, (int)Position.x + 25, (int)Position.y, RED);
-	DrawLine((int)Position.x, (int)Position.y, (int)Position.x, (int)Position.y + 25, GREEN);
-
-	switch (Collider.Type)
-	{
-	case ShapeType::NONE:
-		DrawPixel((int)Position.x, (int)Position.y, Tint);
-		break;
-	case ShapeType::CIRCLE:
-		// Draw circle
-		DrawCircleLines((int)Position.x, (int)Position.y, Collider.CircleData.Radius, Tint);
-		break;
-	case ShapeType::AABB:
-		// Draw AABB
-		DrawRectangleLines((int)(Position.x - Collider.AABBData.HalfExtents.x), (int)(Position.y - Collider.AABBData.HalfExtents.y),
-			(int)Collider.AABBData.HalfExtents.x * 2, (int)Collider.AABBData.HalfExtents.y * 2, Tint);
-		break;
-	}
 }
 
 Vector2 GameObject::GetMomentum() const

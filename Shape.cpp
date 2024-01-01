@@ -1,8 +1,23 @@
 #include "Shape.h"
-#include "raylib.h"
-#include "raymath.h"
+#include "GameObject.h"
 
 #include <cmath>
+
+void Shape::Draw(GameObject* Owner)
+{
+    switch (Type)
+    {
+    case ShapeType::AABB:
+        DrawRectangleLines((int)(Owner->Position.x - AABBData.HalfExtents.x),
+                           (int)(Owner->Position.y - AABBData.HalfExtents.y),
+                           (int)(AABBData.HalfExtents.x + AABBData.HalfExtents.x),
+                           (int)(AABBData.HalfExtents.y + AABBData.HalfExtents.y), Owner->CollisionColor);
+        break;
+    case ShapeType::CIRCLE:
+        DrawCircleLines((int)(Owner->Position.x), (int)(Owner->Position.y), CircleData.Radius, Owner->CollisionColor);
+        break;
+    }
+}
 
 bool CheckCircleCircle(Vector2 posA, Circle circleA, Vector2 posB, Circle circleB)
 {
