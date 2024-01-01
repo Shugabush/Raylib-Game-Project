@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Shape.h"
+#include "PairHash.h"
 
 #include <vector>
 #include <unordered_map>
@@ -10,9 +11,12 @@
 using CollisionFunc = bool(*)(const Vector2&, const Shape&, const Vector2&, const Shape&);
 using DepenetrationFunc = Vector2(*)(const Vector2&, const Shape&, const Vector2&, const Shape&, float&);
 
-// a map that take a collision pair and returns the correct function to call
-using CollisionMap = std::unordered_map<ShapeType, CollisionFunc>;
-using DepenetrationMap = std::unordered_map<ShapeType, DepenetrationFunc>;
+// maps that take a collision pair and returns the correct function to call
+using CollisionFuncMap = std::unordered_map<ShapeType, CollisionFunc>;
+using DepenetrationFuncMap = std::unordered_map<ShapeType, DepenetrationFunc>;
+
+// a map that takes a game object pair and returns a bool
+using CollisionMap = std::unordered_map<std::pair<GameObject*, GameObject*>, bool, PairHash>;
 
 class BaseScene
 {
@@ -34,8 +38,10 @@ protected:
 	std::vector<GameObject*> ObjectsToAdd;
 	std::vector<GameObject*> ObjectsToDestroy;
 
-	CollisionMap collisionCheckers;
-	DepenetrationMap collisionDepenetrators;
+	CollisionFuncMap collisionCheckers;
+	DepenetrationFuncMap collisionDepenetrators;
+
+	CollisionMap objectsColliding;
 
 public:
 	// defaults to 30fps

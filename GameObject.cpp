@@ -6,9 +6,9 @@
 
 GameObject::GameObject()
 {
-	Collider = Shape();
-	Collider.Type = ShapeType::AABB;
-	Collider.AABBData.HalfExtents = { 25, 25 };
+	Col = Collider();
+	Col.Type = ShapeType::AABB;
+	Col.AABBData.HalfExtents = { 25, 25 };
 }
 
 void GameObject::EarlyStart()
@@ -68,7 +68,7 @@ void GameObject::LateDraw()
 	}
 	if (DrawCollision)
 	{
-		Collider.Draw(this);
+		Col.Draw(this);
 	}
 }
 
@@ -90,6 +90,42 @@ void GameObject::FixedUpdate(float fixedDelta)
 	Position += Velocity * fixedDelta;
 
 	Position = Position + Velocity;
+}
+
+void GameObject::ComputeCollisionEnter(GameObject& OtherObject)
+{
+	if (OtherObject.Col.IsTrigger)
+	{
+		OnTriggerEnter(OtherObject);
+	}
+	else
+	{
+		OnCollisionEnter(OtherObject);
+	}
+}
+
+void GameObject::ComputeCollisionStay(GameObject& OtherObject)
+{
+	if (OtherObject.Col.IsTrigger)
+	{
+		OnTriggerStay(OtherObject);
+	}
+	else
+	{
+		OnCollisionStay(OtherObject);
+	}
+}
+
+void GameObject::ComputeCollisionExit(GameObject& OtherObject)
+{
+	if (OtherObject.Col.IsTrigger)
+	{
+		OnTriggerExit(OtherObject);
+	}
+	else
+	{
+		OnCollisionExit(OtherObject);
+	}
 }
 
 void GameObject::AddAccel(Vector2 accel)
@@ -128,6 +164,36 @@ void GameObject::SetParent(GameObject* NewParent)
 	{
 		Parent->Children.push_back(this);
 	}
+}
+
+void GameObject::OnCollisionEnter(GameObject& OtherObject)
+{
+
+}
+
+void GameObject::OnCollisionStay(GameObject& OtherObject)
+{
+
+}
+
+void GameObject::OnCollisionExit(GameObject& OtherObject)
+{
+
+}
+
+void GameObject::OnTriggerEnter(GameObject& OtherObject)
+{
+
+}
+
+void GameObject::OnTriggerStay(GameObject& OtherObject)
+{
+
+}
+
+void GameObject::OnTriggerExit(GameObject& OtherObject)
+{
+
 }
 
 void ResolveGameObjects(GameObject& left, GameObject& right, float elasticity, Vector2 normal, float pen)

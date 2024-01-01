@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "Utils.h"
+#include "EnumUtils.h"
 
 #include <algorithm>
 
@@ -87,33 +88,54 @@ void BaseScene::FixedUpdate()
 {
 	AccumulatedFixedTime -= TargetFixedStep;
 
-	for (auto& i : GameObjects)
+	for (int i = 0; i < GameObjects.size(); i++)
 	{
-		i->FixedUpdate(TargetFixedStep);
-		for (auto& j : GameObjects)
+		GameObject* obj1 = GameObjects[i];
+		obj1->FixedUpdate(TargetFixedStep);
+		for (int j = i + 1; j < GameObjects.size(); j++)
 		{
-			if (&i == &j) { continue; }
+			GameObject* obj2 = GameObjects[j];
+			if (&obj1 == &obj2) { continue; }
 
-			auto left = i;
-			auto right = j;
+			auto left = obj1;
+			auto right = obj2;
 
-			if (i->Collider.Type > j->Collider.Type)
+			if (obj1->Col.Type > obj2->Col.Type)
 			{
-				left = j;
-				right = i;
+				left = obj2;
+				right = obj1;
 			}
 
-			ShapeType pairType = left->Collider.Type | right->Collider.Type;
+			ShapeType pairType = left->Col.Type | right->Col.Type;
 
 			// Check every object against every other object
-			bool isColliding = collisionCheckers[pairType](left->Position, left->Collider, right->Position, right->Collider);
+			bool isColliding = collisionCheckers[pairType](left->Position, left->Col, right->Position, right->Col);
 
 			if (isColliding)
 			{
 				float pen = 0;
-				Vector2 normal = collisionDepenetrators[pairType](left->Position, left->Collider, right->Position, right->Collider, pen);
+				Vector2 normal = collisionDepenetrators[pairType](left->Position, left->Col, right->Position, right->Col, pen);
+
+				if (!objectsColliding[{left, right}])
+				{
+					left->ComputeCollisionEnter(*right);
+					right->ComputeCollisionEnter(*left);
+					objectsColliding[{left, right}] = true;
+				}
+
+				left->ComputeCollisionStay(*right);
+				right->ComputeCollisionStay(*left);
 
 				ResolvePhysObjects(*left, *right, 1, normal, pen);
+			}
+			else
+			{
+				if (objectsColliding[{left, right}])
+				{
+					left->ComputeCollisionExit(*right);
+					right->ComputeCollisionExit(*left);
+					objectsColliding[{left, right}] = false;
+				}
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Shape.h"
+#include "Collider.h"
 
 #include <vector>
 #include <string>
@@ -37,7 +37,7 @@ public:
 	// Rotation
 	float Rotation = 0;
 
-	Shape Collider;
+	Collider Col;
 
 	bool UseGravity = false;
 
@@ -59,6 +59,10 @@ public:
 	virtual void Draw();
 	virtual void LateDraw();
 
+	void ComputeCollisionEnter(GameObject& OtherObject);
+	void ComputeCollisionStay(GameObject& OtherObject);
+	void ComputeCollisionExit(GameObject& OtherObject);
+
 	virtual void FixedUpdate(float fixedDelta);
 
 	void AddAccel(Vector2 accel);
@@ -72,6 +76,15 @@ public:
 	Vector2 GetMomentum() const;
 
 	void SetParent(GameObject* Parent);
+
+protected:
+	virtual void OnCollisionEnter(GameObject& OtherObject);
+	virtual void OnCollisionStay(GameObject& OtherObject);
+	virtual void OnCollisionExit(GameObject& OtherObject);
+
+	virtual void OnTriggerEnter(GameObject& OtherObject);
+	virtual void OnTriggerStay(GameObject& OtherObject);
+	virtual void OnTriggerExit(GameObject& OtherObject);
 };
 
 void ResolvePhysObjects(GameObject& left, GameObject& right, float elasticity, Vector2 normal, float pen);

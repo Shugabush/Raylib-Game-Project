@@ -18,6 +18,7 @@ int main() {
 
     Player* SpawnedPlayer = Game->SpawnObject<Player>({ 250, 250 }, 0);
     SpawnedPlayer->Texture = GetTexture("Textures/CharacterPack/PNG/Skin/Tint1/tint1_head.png");
+    SpawnedPlayer->Name = "Player";
 
     GameObject* SpawnedObject = Game->SpawnObject<GameObject>({ 100, 100 }, 0);
 
