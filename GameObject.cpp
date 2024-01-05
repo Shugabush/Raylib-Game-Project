@@ -1,5 +1,4 @@
 #include "GameObject.h"
-#include "raylib.h"
 #include "Utils.h"
 #include <cassert>
 #include <iostream>
@@ -7,8 +6,8 @@
 GameObject::GameObject()
 {
 	Col = Collider();
-	Col.Type = ShapeType::AABB;
-	Col.AABBData.HalfExtents = { 25, 25 };
+	Col.Type = ShapeType::Box;
+	Col.BoxData.HalfExtents = { 25, 25 };
 }
 
 void GameObject::EarlyStart()
@@ -64,7 +63,10 @@ void GameObject::LateDraw()
 {
 	if (DrawForwardDirection)
 	{
-		DrawLine((int)Position.x, (int)Position.y, (int)(Position.x), (int)(Position.y + 50), ForwardDirectionColor);
+		Vector2 FwdPosition = Position;
+		FwdPosition.y += 50;
+
+		DrawLine((int)Position.x, (int)Position.y, (int)(FwdPosition.x), (int)(FwdPosition.y), ForwardDirectionColor);
 	}
 	if (DrawCollision)
 	{

@@ -1,15 +1,14 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Shape.h"
 #include "PairHash.h"
 
 #include <vector>
 #include <unordered_map>
 
 // the function signature for any collision detection test
-using CollisionFunc = bool(*)(const Vector2&, const Shape&, const Vector2&, const Shape&);
-using DepenetrationFunc = Vector2(*)(const Vector2&, const Shape&, const Vector2&, const Shape&, float&);
+using CollisionFunc = bool(*)(const Vector2&, const Collider&, const Vector2&, const Collider&);
+using DepenetrationFunc = Vector2(*)(const Vector2&, const Collider&, const Vector2&, const Collider&, float&);
 
 // maps that take a collision pair and returns the correct function to call
 using CollisionFuncMap = std::unordered_map<ShapeType, CollisionFunc>;

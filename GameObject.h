@@ -77,7 +77,6 @@ public:
 
 	void SetParent(GameObject* Parent);
 
-protected:
 	virtual void OnCollisionEnter(GameObject& OtherObject);
 	virtual void OnCollisionStay(GameObject& OtherObject);
 	virtual void OnCollisionExit(GameObject& OtherObject);

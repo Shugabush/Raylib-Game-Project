@@ -2,8 +2,6 @@
 #include "Player.h"
 #include "TextureLibrary.h"
 
-#include <raylib-cpp.hpp>
-
 int main() {
     
     // Initialization
@@ -21,12 +19,15 @@ int main() {
     SpawnedPlayer->Name = "Player";
 
     GameObject* SpawnedObject = Game->SpawnObject<GameObject>({ 100, 100 }, 0);
+    SpawnedObject->Col.IsTrigger = true;
 
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         // Update
         // TODO: Update your variables here
+        SpawnedObject->Rotation += GetFrameTime();
+
         Game->Update(GetFrameTime());
 
         Game->FixedUpdate();

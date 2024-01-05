@@ -1,9 +1,9 @@
 #include "BaseScene.h"
 
-#include "raylib.h"
 #include "Utils.h"
 #include "EnumUtils.h"
 
+#include <raylib.h>
 #include <algorithm>
 
 BaseScene::BaseScene() { }
@@ -20,12 +20,12 @@ BaseScene::~BaseScene()
 void BaseScene::Init()
 {
 	collisionCheckers[ShapeType::CIRCLE | ShapeType::CIRCLE] = CheckCircleCircle;
-	collisionCheckers[ShapeType::CIRCLE | ShapeType::AABB] = CheckCircleAABB;
-	collisionCheckers[ShapeType::AABB | ShapeType::AABB] = CheckAABBAABB;
+	collisionCheckers[ShapeType::CIRCLE | ShapeType::Box] = CheckCircleBox;
+	collisionCheckers[ShapeType::Box | ShapeType::Box] = CheckBoxBox;
 
 	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::CIRCLE] = DepenetrateCircleCircle;
-	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::AABB] = DepenetrateCircleAABB;
-	collisionDepenetrators[ShapeType::AABB | ShapeType::AABB] = DepenetrateAABBAABB;
+	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::Box] = DepenetrateCircleBox;
+	collisionDepenetrators[ShapeType::Box | ShapeType::Box] = DepenetrateBoxBox;
 
 	SetTargetFPS(60);
 
@@ -126,7 +126,10 @@ void BaseScene::FixedUpdate()
 				left->ComputeCollisionStay(*right);
 				right->ComputeCollisionStay(*left);
 
-				ResolvePhysObjects(*left, *right, 1, normal, pen);
+				if (!left->Col.IsTrigger && !right->Col.IsTrigger)
+				{
+					ResolvePhysObjects(*left, *right, 1, normal, pen);
+				}
 			}
 			else
 			{
