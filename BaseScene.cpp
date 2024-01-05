@@ -20,12 +20,15 @@ BaseScene::~BaseScene()
 void BaseScene::Init()
 {
 	collisionCheckers[ShapeType::CIRCLE | ShapeType::CIRCLE] = CheckCircleCircle;
-	collisionCheckers[ShapeType::CIRCLE | ShapeType::Box] = CheckCircleBox;
-	collisionCheckers[ShapeType::Box | ShapeType::Box] = CheckBoxBox;
+	collisionCheckers[ShapeType::CIRCLE | ShapeType::AABB] = CheckCircleAABB;
+	collisionCheckers[ShapeType::CIRCLE | ShapeType::OBB] = CheckCircleOBB;
+	collisionCheckers[ShapeType::AABB | ShapeType::AABB] = CheckAABBAABB;
+	collisionCheckers[ShapeType::AABB | ShapeType::OBB] = CheckAABBOBB;
+	collisionCheckers[ShapeType::OBB | ShapeType::OBB] = CheckOBBOBB;
 
 	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::CIRCLE] = DepenetrateCircleCircle;
-	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::Box] = DepenetrateCircleBox;
-	collisionDepenetrators[ShapeType::Box | ShapeType::Box] = DepenetrateBoxBox;
+	collisionDepenetrators[ShapeType::CIRCLE | ShapeType::AABB] = DepenetrateCircleAABB;
+	collisionDepenetrators[ShapeType::AABB | ShapeType::AABB] = DepenetrateAABBAABB;
 
 	SetTargetFPS(60);
 
@@ -36,6 +39,7 @@ void BaseScene::Init()
 
 	for (auto& i : GameObjects)
 	{
+		i->PrimaryStart();
 		i->Start();
 	}
 
@@ -75,6 +79,7 @@ void BaseScene::Update(float deltaTime)
 
 	for (auto& i : GameObjects)
 	{
+		i->PrimaryUpdate(deltaTime);
 		i->Update(deltaTime);
 	}
 
@@ -153,6 +158,7 @@ void BaseScene::Draw() const
 
 	for (auto i : GameObjects)
 	{
+		i->PrimaryDraw();
 		i->Draw();
 	}
 

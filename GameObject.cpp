@@ -6,8 +6,14 @@
 GameObject::GameObject()
 {
 	Col = Collider();
-	Col.Type = ShapeType::Box;
-	Col.BoxData.HalfExtents = { 25, 25 };
+	Col.Type = ShapeType::OBB;
+	Col.OBBData.HalfExtents = { 25, 25 };
+	Col.OBBData.Rotation = Rotation;
+}
+
+void GameObject::PrimaryStart()
+{
+
 }
 
 void GameObject::EarlyStart()
@@ -25,6 +31,14 @@ void GameObject::LateStart()
 
 }
 
+void GameObject::PrimaryUpdate(float deltaTime)
+{
+	if (Col.Type == ShapeType::OBB)
+	{
+		Col.OBBData.Rotation = Rotation;
+	}
+}
+
 void GameObject::EarlyUpdate(float deltaTime)
 {
 
@@ -36,6 +50,11 @@ void GameObject::Update(float deltaTime)
 }
 
 void GameObject::LateUpdate(float deltaTime)
+{
+
+}
+
+void GameObject::PrimaryDraw()
 {
 
 }

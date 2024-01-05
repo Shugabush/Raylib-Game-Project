@@ -3,13 +3,14 @@
 #include "Utils.h"
 
 #include <cmath>
+#include <iostream>
 
 void Collider::Draw(GameObject* Owner)
 {
     switch (Type)
     {
-    case ShapeType::Box:
-        DrawRectangleLines(Owner->Position.x, Owner->Position.y, BoxData.HalfExtents.x * 2, BoxData.HalfExtents.y * 2, Owner->Rotation, Owner->CollisionColor);
+    case ShapeType::AABB:
+        DrawRectangleLines(Owner->Position.x, Owner->Position.y, AABBData.HalfExtents.x * 2, AABBData.HalfExtents.y * 2, Owner->Rotation, Owner->CollisionColor);
         break;
     case ShapeType::CIRCLE:
         DrawCircleLines((Owner->Position.x), (Owner->Position.y), CircleData.Radius, Owner->CollisionColor);
@@ -30,9 +31,9 @@ bool CheckCircleCircle(const Vector2& posA, const Collider& shapeA, const Vector
     return CheckCircleCircle(posA, shapeA.CircleData, posB, shapeB.CircleData);
 }
 
-bool CheckCircleBox(Vector2 posA, Circle circleA, Vector2 posB, Box aABB)
+bool CheckCircleAABB(Vector2 posA, Circle circleA, Vector2 posB, AABB aABB)
 {
-    // clamp the center of the circle to the bounds of the Box
+    // clamp the center of the circle to the bounds of the AABB
     float clampedX = Clamp(posA.x, aABB.GetMin(posB).x, aABB.GetMax(posB).x);
     float clampedY = Clamp(posA.y, aABB.GetMin(posB).y, aABB.GetMax(posB).y);
 
@@ -40,22 +41,33 @@ bool CheckCircleBox(Vector2 posA, Circle circleA, Vector2 posB, Box aABB)
 
     return dstToClamped2 < (circleA.Radius * circleA.Radius);
 }
-bool CheckCircleBox(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
+bool CheckCircleAABB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
 {
-    return CheckCircleBox(posA, shapeA.CircleData, posB, shapeB.BoxData);
+    return CheckCircleAABB(posA, shapeA.CircleData, posB, shapeB.AABBData);
 }
 
-bool CheckBoxBox(Vector2 posA, Box boxA, Vector2 posB, Box boxB)
+bool CheckCircleOBB(Vector2 posA, Circle circleA, Vector2 posB, OBB oBB)
+{
+    std::cout << "circle-obb check" << std::endl;
+    return false;
+}
+
+bool CheckCircleOBB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
+{
+    return CheckCircleOBB(posA, shapeA.CircleData, posB, shapeB.OBBData);
+}
+
+bool CheckAABBAABB(Vector2 posA, AABB aABB1, Vector2 posB, AABB aABB2)
 {
     bool xOverlaps = false;
     bool yOverlaps = false;
 
     // X overlap checks
-    if (posA.x < posB.x && posA.x + boxA.HalfExtents.x > posB.x - boxB.HalfExtents.x)
+    if (posA.x < posB.x && posA.x + aABB1.HalfExtents.x > posB.x - aABB2.HalfExtents.x)
     {
         xOverlaps = true;
     }
-    else if (posA.x > posB.x && posA.x - boxA.HalfExtents.x < posB.x + boxB.HalfExtents.x)
+    else if (posA.x > posB.x && posA.x - aABB1.HalfExtents.x < posB.x + aABB2.HalfExtents.x)
     {
         xOverlaps = true;
     }
@@ -65,11 +77,11 @@ bool CheckBoxBox(Vector2 posA, Box boxA, Vector2 posB, Box boxB)
     }
 
     // Y overlap checks
-    if (posA.y < posB.y && posA.y + boxA.HalfExtents.y > posB.y - boxB.HalfExtents.y)
+    if (posA.y < posB.y && posA.y + aABB1.HalfExtents.y > posB.y - aABB2.HalfExtents.y)
     {
         yOverlaps = true;
     }
-    else if (posA.y > posB.y && posA.y - boxA.HalfExtents.y < posB.y + boxB.HalfExtents.y)
+    else if (posA.y > posB.y && posA.y - aABB1.HalfExtents.y < posB.y + aABB2.HalfExtents.y)
     {
         yOverlaps = true;
     }
@@ -80,9 +92,30 @@ bool CheckBoxBox(Vector2 posA, Box boxA, Vector2 posB, Box boxB)
 
     return xOverlaps && yOverlaps;
 }
-bool CheckBoxBox(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
+bool CheckAABBAABB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
 {
-    return CheckBoxBox(posA, shapeA.BoxData, posB, shapeB.BoxData);
+    return CheckAABBAABB(posA, shapeA.AABBData, posB, shapeB.AABBData);
+}
+
+bool CheckAABBOBB(Vector2 posA, AABB aABB, Vector2 posB, OBB oBB)
+{
+    std::cout << "aabb-obb check" << std::endl;
+    return false;
+}
+
+bool CheckAABBOBB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
+{
+    return CheckAABBOBB(posA, shapeA.AABBData, posB, shapeB.OBBData);
+}
+
+bool CheckOBBOBB(Vector2 posA, OBB oBB1, Vector2 posB, OBB oBB2)
+{
+    return false;
+}
+
+bool CheckOBBOBB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB)
+{
+    return CheckOBBOBB(posA, shapeA.OBBData, posB, shapeB.OBBData);
 }
 
 Vector2 DepenetrateCircleCircle(const Vector2& posA, const Circle& circleA, const Vector2& posB, const Circle& circleB, float& pen)
@@ -105,19 +138,19 @@ Vector2 DepenetrateCircleCircle(const Vector2& posA, const Collider& shapeA, con
     return DepenetrateCircleCircle(posA, shapeA.CircleData, posB, shapeB.CircleData, pen);
 }
 
-Vector2 DepenetrateCircleBox(const Vector2& posA, const Circle& circleA, const Vector2& posB, const Box& aABB, float& pen)
+Vector2 DepenetrateCircleAABB(const Vector2& posA, const Circle& circleA, const Vector2& posB, const AABB& aABB, float& pen)
 {
     // cache min and max
     Vector2 min = aABB.GetMin(posB);
     Vector2 max = aABB.GetMax(posB);
 
-    // find the nearest point within the Box bounds
+    // find the nearest point within the AABB bounds
     Vector2 nearestPoint = Vector2Clamp(posA, min, max);
 
     // offset from the circle to the nearest point
     Vector2 offset = Vector2Subtract(nearestPoint, posA);
 
-    // is the circle's center within the Box?
+    // is the circle's center within the AABB?
     if (posA.x >= min.x && posA.x <= max.x &&
         posA.y >= min.y && posA.y <= max.y)
     {
@@ -147,12 +180,12 @@ Vector2 DepenetrateCircleBox(const Vector2& posA, const Circle& circleA, const V
     }
 }
 
-Vector2 DepenetrateCircleBox(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB, float& pen)
+Vector2 DepenetrateCircleAABB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB, float& pen)
 {
-    return DepenetrateCircleBox(posA, shapeA.CircleData, posB, shapeB.BoxData, pen);
+    return DepenetrateCircleAABB(posA, shapeA.CircleData, posB, shapeB.AABBData, pen);
 }
 
-Vector2 DepenetrateBoxBox(const Vector2& posA, const Box& aABB1, const Vector2& posB, const Box& aABB2, float& pen)
+Vector2 DepenetrateAABBAABB(const Vector2& posA, const AABB& aABB1, const Vector2& posB, const AABB& aABB2, float& pen)
 {
     Vector2 rawOffset = Vector2Subtract(posB, posA);
     Vector2 offset = { abs(rawOffset.x), abs(rawOffset.y) };
@@ -179,7 +212,7 @@ Vector2 DepenetrateBoxBox(const Vector2& posA, const Box& aABB1, const Vector2& 
     return normal;
 }
 
-Vector2 DepenetrateBoxBox(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB, float& pen)
+Vector2 DepenetrateAABBAABB(const Vector2& posA, const Collider& shapeA, const Vector2& posB, const Collider& shapeB, float& pen)
 {
-    return DepenetrateBoxBox(posA, shapeA.BoxData, posB, shapeB.BoxData, pen);
+    return DepenetrateAABBAABB(posA, shapeA.AABBData, posB, shapeB.AABBData, pen);
 }

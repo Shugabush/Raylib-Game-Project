@@ -47,14 +47,17 @@ public:
 	// Drag
 	float Drag = 0.5f;
 
+	void PrimaryStart();
 	virtual void EarlyStart();
 	virtual void Start();
 	virtual void LateStart();
 
+	void PrimaryUpdate(float deltaTime);
 	virtual void EarlyUpdate(float deltaTime);
 	virtual void Update(float deltaTime);
 	virtual void LateUpdate(float deltaTime);
 
+	void PrimaryDraw();
 	virtual void EarlyDraw();
 	virtual void Draw();
 	virtual void LateDraw();
